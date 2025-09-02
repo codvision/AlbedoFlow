@@ -1,0 +1,232 @@
+:root {
+    --bg-color: #1a1a1a;
+    --panel-color: #2a2a2a;
+    --border-color: #444;
+    --text-color: #e0e0e0;
+    --accent-color: #00aaff;
+    --tool-bg: #333;
+}
+
+/* Layout de página inteira com Flexbox */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* O container principal cresce para preencher o espaço disponível */
+.main-container {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+/* LAYOUT */
+/* Remove o espaçamento padrão do container E da linha para um encaixe perfeito */
+.main-container.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+.main-container .row {
+    height: 100%;
+    width: 100%;
+    margin-left: 0;  /* Anula a margem negativa padrão do .row */
+    margin-right: 0; /* Anula a margem negativa padrão do .row */
+}
+
+/* Garante que as colunas do Bootstrap ocupem toda a altura disponível */
+.main-container .row > [class*="col-"] {
+    height: 100%;
+}
+
+.panel-left {
+    padding: 1rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-color);
+    height: 100%;
+}
+
+.panel-right-container {
+    position: relative;
+    padding: 0;
+    height: 100%;
+}
+
+.bg-panel { background-color: var(--panel-color) !important; }
+.card { border-color: var(--border-color); }
+.card-title, h5 { color: var(--accent-color); }
+.navbar-brand {
+    color: var(--text-color);
+    font-family: "Geologica", sans-serif;
+    font-weight: 600;
+}
+.navbar-brand-flow {
+    color: #ff4d4d;
+    background: linear-gradient(45deg, #ff4d4d, #c91c1c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+.navbar-brand sup {
+    font-weight: 400;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color: var(--accent-color);
+    opacity: 0.7;
+}
+.btn-header-icon {
+    background-color: transparent;
+    border: none;
+    color: #aaa;
+    padding: 0.375rem 0.75rem;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+.btn-header-icon:hover, .btn-header-icon:focus {
+    background-color: var(--tool-bg);
+    color: #fff;
+    box-shadow: none;
+}
+.btn-bug-report { color: #ffc107; }
+.btn-bug-report:hover, .btn-bug-report:focus { color: #000; background-color: #ffc107; }
+.btn-donate { color: #e83e8c; }
+.btn-donate:hover, .btn-donate:focus { color: #fff; background-color: #e83e8c; }
+.vr {
+    border-left-color: var(--border-color);
+    height: 25px;
+    align-self: center;
+    margin-left: 0.75rem;
+    margin-right: 0.5rem;
+}
+#lang-selector.dropdown-toggle::after {
+    display: none;
+}
+.fa-circle-question {
+    color: #888;
+    cursor: help;
+    font-size: 0.8em;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+}
+.tooltip {
+    --bs-tooltip-bg: var(--accent-color);
+    --bs-tooltip-color: #000;
+    --bs-tooltip-opacity: 1;
+    --bs-tooltip-max-width: 250px;
+}
+.form-select, .form-control {
+    background-color: var(--tool-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+.form-select:focus, .form-control:focus {
+    background-color: var(--tool-bg);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 .25rem rgba(0, 170, 255, .25);
+    color: var(--text-color);
+}
+.form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.form-range::-webkit-slider-thumb { background-color: var(--accent-color); }
+.form-range::-moz-range-thumb { background-color: var(--accent-color); }
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+.btn-accent:hover {
+    background-color: #0095e0;
+    border-color: #0095e0;
+    color: #fff;
+}
+.texture-previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+.texture-preview { position: relative; aspect-ratio: 1 / 1; background: #333; border: 2px solid transparent; border-radius: 5px; cursor: pointer; transition: all 0.2s; }
+.texture-preview:hover, .texture-preview.active { border-color: var(--accent-color); }
+.texture-preview canvas { width: 100%; height: 100%; border-radius: 3px; image-rendering: pixelated; transition: filter 0.2s; }
+.texture-preview .label { position: absolute; bottom: 5px; left: 5px; font-size: 0.7em; color: #fff; background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 3px; }
+
+/* --- CSS CORRIGIDO E APRIMORADO --- */
+.texture-preview .toggle-visibility {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 3px;
+    border-radius: 50%;
+    font-size: 0.8em;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.texture-preview .toggle-visibility:hover {
+    background-color: var(--accent-color);
+}
+
+/* Estilos para o estado desativado */
+.texture-preview.disabled {
+    opacity: 0.5;
+    border-color: transparent !important; /* Evita a borda ao passar o mouse */
+}
+.texture-preview.disabled.active {
+    border-color: #666 !important; /* Borda sutil se estiver selecionado mas desativado */
+}
+.texture-preview.disabled:not(.active) {
+     cursor: default;
+}
+.texture-preview.disabled canvas {
+    filter: grayscale(1);
+}
+
+
+
+#viewer3d { width: 100%; height: 100%; display: block; }
+.viewer-controls { position: absolute; top: 10px; right: 10px; width: 250px; opacity: 0.9; max-height: calc(100% - 20px); display: flex; flex-direction: column; }
+.viewer-controls-header { cursor: pointer; flex-shrink: 0; }
+.viewer-controls-content { transition: all .3s ease; overflow-y: auto; }
+.viewer-controls.collapsed .viewer-controls-content {
+    display: none;
+}
+.toggle-btn { transition: transform .3s ease; display: inline-block; }
+.viewer-controls.collapsed .toggle-btn { transform: rotate(-90deg); }
+.tool-group { background-color: var(--tool-bg); border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+.tool-group h6 { color: var(--accent-color); margin-bottom: 1rem; }
+.slider-group { margin-bottom: 1rem; }
+.slider-group .label-line { display: flex; justify-content: space-between; font-size: 0.9em; }
+footer { 
+    border-top: 1px solid var(--border-color); 
+    flex-shrink: 0;
+}
+footer a { color: #aaa; text-decoration: none; transition: color 0.2s ease-in-out; }
+footer a:hover { color: var(--accent-color); }
+#loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; flex-direction: column; gap: 20px; transition: opacity .3s; visibility: hidden; opacity: 0; }
+#loader.visible { visibility: visible; opacity: 1; }
+.spinner { width: 50px; height: 50px; border: 5px solid #555; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.panel-left::-webkit-scrollbar, .viewer-controls-content::-webkit-scrollbar { width: 8px; }
+.panel-left::-webkit-scrollbar-track, .viewer-controls-content::-webkit-scrollbar-track { background: var(--tool-bg); }
+.panel-left::-webkit-scrollbar-thumb, .viewer-controls-content::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; border: 2px solid var(--tool-bg); }
+.panel-left::-webkit-scrollbar-thumb:hover, .viewer-controls-content::-webkit-scrollbar-thumb:hover { background-color: #0095e0; }
+.dropdown-menu { --bs-dropdown-bg: var(--panel-color); --bs-dropdown-border-color: var(--border-color); --bs-dropdown-link-color: var(--text-color); --bs-dropdown-link-hover-color: var(--text-color); --bs-dropdown-link-hover-bg: var(--tool-bg); }
+.dropdown-item { display: flex; justify-content: space-between; align-items: center; }
+.modal-content { background-color: var(--panel-color); border-color: var(--border-color); }
+.modal-header { border-bottom-color: var(--border-color); }
+.btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+.form-label, .form-check-label { color: var(--text-color); }
+.text-muted { color: #aaa !important; }
+.viewer-controls { color: var(--text-color); }
+
+/* Modal de seleção de mapas */
+#maps-selection-list .list-group-item {
+    background-color: var(--tool-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}

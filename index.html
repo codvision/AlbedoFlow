@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="metaTitle">AlbedoFlow - Gerador de Mapas de Textura PBR</title>
+    <meta name="description" data-lang-key="metaDescription" content="AlbedoFlow: Ferramenta online gratuita e otimizada para gerar mapas de textura PBR. Escolha, crie e ajuste mapas de Diffuse, Normal, Height, AO, e Curvatura com controles avançados.">
+    <meta name="keywords" content="AlbedoFlow, PBR, physically based rendering, gerador de textura, texture generator, mapa normal, normal map, mapa de altura, height map, ambient occlusion, AO, roughness, metallic, ORM, 3D, texturização, gamedev, webgl, online, grátis, free, curvature map, mapa de curvatura, diffuse editor, accessibility, a11y">
+    <meta name="author" content="codvision">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://codvision.github.io/albedoflow/">
+    <meta property="og:title" data-lang-key="ogTitle" content="AlbedoFlow - Gerador de Mapas de Textura PBR Online">
+    <meta property="og:description" data-lang-key="ogDescription" content="Crie e ajuste mapas de textura PBR (Diffuse, Normal, AO, etc.) de forma rápida e gratuita, diretamente no seu navegador com AlbedoFlow.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://codvision.github.io/albedoflow/">
+    <meta property="og:image" content="https://codvision.github.io/albedoflow/preview.jpg">
+    <meta property="og:site_name" content="AlbedoFlow">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AlbedoFlow - Gerador de Mapas de Textura PBR">
+    <meta name="twitter:description" content="Crie e ajuste mapas de textura PBR (Diffuse, Normal, AO, etc.) de forma rápida e gratuita, diretamente no seu navegador com AlbedoFlow.">
+    <meta name="twitter:image" content="https://codvision.github.io/albedoflow/preview.jpg">
+    <script type="application/ld+json">
+    { "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "AlbedoFlow", "applicationCategory": "MultimediaApplication", "operatingSystem": "Web", "description": "Ferramenta online para gerar e ajustar mapas de textura PBR (Diffuse, Normal, Height, Ambient Occlusion, Roughness, Metallic, Curvature) a partir de uma imagem.", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }, "author": { "@type": "Person", "name": "codvision" } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div><span data-lang-key="loaderProcessing">Processando...</span></div>
+
+    <header class="navbar navbar-expand-lg navbar-dark bg-panel">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Albedo<span class="navbar-brand-flow">Flow</span> <sup>v2.3</sup></a>
+            <div class="d-flex ms-auto align-items-center">
+                <button type="button" class="btn btn-header-icon" data-bs-toggle="modal" data-bs-target="#termsModal" data-lang-title-key="termsTooltip" title="Ver Termos de Uso"><i class="fa-solid fa-shield-halved fa-fw" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-header-icon btn-bug-report" data-bs-toggle="modal" data-bs-target="#reportModal" data-lang-title-key="reportBugTooltip" title="Reportar Erro ou Sugestão"><i class="fa-solid fa-bug fa-fw" aria-hidden="true"></i></button>
+                <a href="https://ko-fi.com/albedoflow" target="_blank" rel="noopener noreferrer" class="btn btn-header-icon btn-donate ms-2" data-lang-title-key="donateTooltip" title="Apoie o Projeto"><i class="bi bi-heart-fill" aria-hidden="true"></i></a>
+                <div class="vr"></div>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-header-icon dropdown-toggle" id="lang-selector" data-bs-toggle="dropdown" aria-expanded="false" title="Selecionar Idioma" aria-label="Selecionar Idioma"><i class="bi bi-globe" aria-hidden="true"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="lang-selector">
+                        <li><a class="dropdown-item" href="#" id="lang-pt"><span id="current-lang-text-pt">Português</span> <span class="ms-auto" id="check-pt"></span></a></li>
+                        <li><a class="dropdown-item" href="#" id="lang-en"><span id="current-lang-text-en">English</span> <span class="ms-auto" id="check-en"></span></a></li>
+                    </ul>
+                </div>
+                <button type="button" id="fullscreenBtn" class="btn btn-header-icon" data-lang-title-key="fullscreenTooltip" title="Entrar/Sair da Tela Cheia">
+                    <i id="icon-fullscreen" class="fa-solid fa-expand fa-fw" aria-hidden="true"></i>
+                    <i id="icon-exit-fullscreen" class="fa-solid fa-compress fa-fw" style="display: none;" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container container-fluid">
+        <div class="row g-0">
+            <div class="col-lg-4 col-xl-3">
+                <div class="panel panel-left">
+                    <div class="card bg-panel mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title" data-lang-key="section1Title">1. Configurações Globais</h5>
+                            <label for="resolution-select" class="form-label" data-lang-key="resolutionLabel">Resolução de Saída</label>
+                            <select id="resolution-select" class="form-select">
+                                <option value="1024">1K (1024x1024)</option>
+                                <option value="2048" selected>2K (2048x2048)</option>
+                                <option value="4096">4K (4096x4096)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card bg-panel mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title" data-lang-key="section2Title">2. Imagem Base</h5>
+                            <label for="imageLoader" class="btn btn-accent w-100" data-lang-key="selectImage">Selecionar Imagem</label>
+                            <input type="file" id="imageLoader" accept="image/*" class="d-none">
+                            <div id="fileName" class="text-center text-muted mt-2" data-lang-key="noFileSelected">Nenhum arquivo.</div>
+                        </div>
+                    </div>
+                    <div id="maps-section" style="display:none;">
+                        <h5 class="mb-3" data-lang-key="section3Title">3. Mapas de Textura (Previews)</h5>
+                        <div class="texture-previews mb-4">
+                            <div id="preview-diffuse" class="texture-preview active"><canvas id="canvas-diffuse"></canvas><span class="label">Diffuse</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-height" class="texture-preview"><canvas id="canvas-height"></canvas><span class="label">Height</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-normal" class="texture-preview"><canvas id="canvas-normal"></canvas><span class="label">Normal</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-curvature" class="texture-preview"><canvas id="canvas-curvature"></canvas><span class="label" data-lang-key="curvature">Curvatura</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-ao" class="texture-preview"><canvas id="canvas-ao"></canvas><span class="label">Occlusion</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-roughness" class="texture-preview"><canvas id="canvas-roughness"></canvas><span class="label">Roughness</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-metallic" class="texture-preview"><canvas id="canvas-metallic"></canvas><span class="label">Metallic</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                            <div id="preview-orm" class="texture-preview"><canvas id="canvas-orm"></canvas><span class="label">ORM</span><button type="button" class="toggle-visibility" data-lang-title-key="toggleVisibilityTooltip"><i class="fa-solid fa-eye"></i></button></div>
+                        </div>
+                    </div>
+                    <div id="controls-section" style="display:none;">
+                        <h5 class="mb-3" data-lang-key="section4Title">4. Ajustes e Ferramentas</h5>
+                        <div id="tool-container">
+                            <div id="controls-diffuse" class="toolset" style="display:none">
+                                <fieldset>
+                                <div class="tool-group">
+                                    <h6 data-lang-key="colorAdjustments" class="tool-group-header">Ajustes de Cor<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="color" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="diffuseBrightness"><span><span data-lang-key="brightness">Brilho</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="brightnessTooltip"></i></span><span id="diffuseBrightnessValue">1.0</span></label><input type="range" class="form-range" id="diffuseBrightness" min="0" max="2" value="1" step="0.05"></div>
+                                    <div class="slider-group"><label class="label-line" for="diffuseContrast"><span><span data-lang-key="contrast">Contraste</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="contrastTooltip"></i></span><span id="diffuseContrastValue">1.0</span></label><input type="range" class="form-range" id="diffuseContrast" min="0" max="2" value="1" step="0.05"></div>
+                                    <div class="slider-group"><label class="label-line" for="diffuseSaturation"><span><span data-lang-key="saturation">Saturação</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="saturationTooltip"></i></span><span id="diffuseSaturationValue">1.0</span></label><input type="range" class="form-range" id="diffuseSaturation" min="0" max="2" value="1" step="0.05"></div>
+                                    <div class="slider-group"><label class="label-line" for="diffuseHue"><span><span data-lang-key="hue">Matiz</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="hueTooltip"></i></span><span id="diffuseHueValue">0</span></label><input type="range" class="form-range" id="diffuseHue" min="0" max="360" value="0" step="1"></div>
+                                </div>
+                                </fieldset>
+                            </div>
+                            <div id="controls-height" class="toolset" style="display:none">
+                                <fieldset>
+                                <div class="tool-group">
+                                     <h6 data-lang-key="generation" class="tool-group-header">Geração<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="generation" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="heightInvert"><label class="form-check-label" for="heightInvert"><span data-lang-key="invertValues">Inverter Valores</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="invertValuesTooltip"></i></label></div>
+                                    <div class="slider-group"><label class="label-line" for="heightContrast"><span><span data-lang-key="heightContrast">Intensidade (Contraste)</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="heightContrastTooltip"></i></span><span id="heightContrastValue">1.0</span></label><input type="range" class="form-range" id="heightContrast" min="0" max="3" value="1" step="0.05"></div>
+                                    <div class="slider-group"><label class="label-line" for="heightSharpen"><span><span data-lang-key="sharpen">Nitidez</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="sharpenTooltip"></i></span><span id="heightSharpenValue">0.0</span></label><input type="range" class="form-range" id="heightSharpen" min="0" max="2" value="0" step="0.1"></div>
+                                    <div class="slider-group"><label class="label-line" for="heightSmoothness"><span><span data-lang-key="smoothness">Suavizar</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="smoothnessTooltip"></i></span><span id="heightSmoothnessValue">0</span></label><input type="range" class="form-range" id="heightSmoothness" min="0" max="5" value="0" step="1"></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header"><span data-lang-key="levels">Níveis (Levels)</span><button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="levels" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="heightLevelsInBlack"><span><span data-lang-key="blackPoint">Ponto Preto</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="blackPointTooltip"></i></span><span id="heightLevelsInBlackValue">0</span></label><input type="range" class="form-range" id="heightLevelsInBlack" min="0" max="254" value="0" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="heightLevelsInWhite"><span><span data-lang-key="whitePoint">Ponto Branco</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="whitePointTooltip"></i></span><span id="heightLevelsInWhiteValue">255</span></label><input type="range" class="form-range" id="heightLevelsInWhite" min="1" max="255" value="255" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="heightLevelsGamma"><span><span data-lang-key="gamma">Gamma</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="gammaTooltip"></i></span><span id="heightLevelsGammaValue">1.0</span></label><input type="range" class="form-range" id="heightLevelsGamma" min="0.1" max="3" value="1" step="0.05"></div>
+                                </div>
+                                </fieldset>
+                            </div>
+                            <div id="controls-normal" class="toolset" style="display:none">
+                                <fieldset>
+                                <div class="tool-group">
+                                    <h6 data-lang-key="generation" class="tool-group-header">Geração<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="generation" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="normalStrength"><span><span data-lang-key="strength">Intensidade</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="strengthTooltip"></i></span><span id="normalStrengthValue">2.0</span></label><input type="range" class="form-range" id="normalStrength" min="0" max="10" value="2" step="0.1"></div>
+                                    <div class="mb-3"><label for="normalKernel" class="form-label"><span data-lang-key="kernel">Filtro (Kernel)</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="kernelTooltip"></i></label><select id="normalKernel" class="form-select"><option value="sobel">Sobel</option><option value="scharr">Scharr</option></select></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="normalInvertY"><label class="form-check-label" for="normalInvertY"><span data-lang-key="invertY">Inverter Eixo Y (Green)</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="invertYTooltip"></i></label></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 data-lang-key="sourceAdjustments" class="tool-group-header">Ajustes da Fonte (Height)<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="source" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="normalSourceSmoothness"><span><span data-lang-key="sourceSmoothness">Suavizar Fonte</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="sourceSmoothnessTooltip"></i></span><span id="normalSourceSmoothnessValue">0</span></label><input type="range" class="form-range" id="normalSourceSmoothness" min="0" max="5" value="0" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="normalSourceLevelsInBlack"><span><span data-lang-key="blackPoint">Ponto Preto</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="normalBlackPointTooltip"></i></span><span id="normalSourceLevelsInBlackValue">0</span></label><input type="range" class="form-range" id="normalSourceLevelsInBlack" min="0" max="254" value="0" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="normalSourceLevelsInWhite"><span><span data-lang-key="whitePoint">Ponto Branco</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="normalWhitePointTooltip"></i></span><span id="normalSourceLevelsInWhiteValue">255</span></label><input type="range" class="form-range" id="normalSourceLevelsInWhite" min="1" max="255" value="255" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="normalSourceLevelsGamma"><span><span data-lang-key="gamma">Gamma</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="normalGammaTooltip"></i></span><span id="normalSourceLevelsGammaValue">1.0</span></label><input type="range" class="form-range" id="normalSourceLevelsGamma" min="0.1" max="3" value="1" step="0.05"></div>
+                                </div>
+                                </fieldset>
+                            </div>
+                            <div id="controls-curvature" class="toolset" style="display:none">
+                                <fieldset>
+                                <div class="tool-group">
+                                    <h6 data-lang-key="generation" class="tool-group-header">Geração<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="generation" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="curvatureDetails"><span><span data-lang-key="curvatureDetails">Nível de Detalhe</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="curvatureDetailsTooltip"></i></span><span id="curvatureDetailsValue">1</span></label><input type="range" class="form-range" id="curvatureDetails" min="1" max="8" value="1" step="1"></div>
+                                    <div class="mb-3"><label for="curvatureMode" class="form-label"><span data-lang-key="curvatureMode">Modo de Exibição</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="curvatureModeTooltip"></i></label><select id="curvatureMode" class="form-select"><option value="both" data-lang-key="modeBoth">Ambos</option><option value="edges" data-lang-key="modeEdges">Apenas Bordas</option><option value="crevices" data-lang-key="modeCrevices">Apenas Fendas</option></select></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header">Ajustes Gerais<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="general" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="curvatureInvert"><label class="form-check-label" for="curvatureInvert"><span data-lang-key="invertValues">Inverter Valores</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="invertValuesTooltip"></i></label></div>
+                                    <div class="slider-group"><label class="label-line" for="curvatureSharpen"><span><span data-lang-key="sharpen">Nitidez</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="sharpenTooltip"></i></span><span id="curvatureSharpenValue">0.0</span></label><input type="range" class="form-range" id="curvatureSharpen" min="0" max="2" value="0" step="0.1"></div>
+                                    <div class="slider-group"><label class="label-line" for="curvatureSmoothness"><span><span data-lang-key="smoothness">Suavizar</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="smoothnessTooltip"></i></span><span id="curvatureSmoothnessValue">0</span></label><input type="range" class="form-range" id="curvatureSmoothness" min="0" max="5" value="0" step="1"></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header"><span data-lang-key="levels">Níveis (Levels)</span><button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="levels" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="curvatureLevelsInBlack"><span><span data-lang-key="blackPoint">Ponto Preto</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="blackPointTooltip"></i></span><span id="curvatureLevelsInBlackValue">0</span></label><input type="range" class="form-range" id="curvatureLevelsInBlack" min="0" max="254" value="0" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="curvatureLevelsInWhite"><span><span data-lang-key="whitePoint">Ponto Branco</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="whitePointTooltip"></i></span><span id="curvatureLevelsInWhiteValue">255</span></label><input type="range" class="form-range" id="curvatureLevelsInWhite" min="1" max="255" value="255" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="curvatureLevelsGamma"><span><span data-lang-key="gamma">Gamma</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="gammaTooltip"></i></span><span id="curvatureLevelsGammaValue">1.0</span></label><input type="range" class="form-range" id="curvatureLevelsGamma" min="0.1" max="3" value="1" step="0.05"></div>
+                                </div>
+                                </fieldset>
+                            </div>
+                            <div id="controls-grayscale" class="toolset" style="display:none">
+                                <fieldset>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header">Ajustes Gerais<button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="general" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="grayscaleInvert"><label class="form-check-label" for="grayscaleInvert"><span data-lang-key="invertValues">Inverter Valores</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="invertValuesTooltip"></i></label></div>
+                                    <div class="slider-group"><label class="label-line" for="sharpen"><span><span data-lang-key="sharpen">Nitidez</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="sharpenTooltip"></i></span><span id="sharpenValue">0.0</span></label><input type="range" class="form-range" id="sharpen" min="0" max="2" value="0" step="0.1"></div>
+                                    <div class="slider-group"><label class="label-line" for="smoothness"><span><span data-lang-key="smoothness">Suavizar</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="smoothnessTooltip"></i></span><span id="smoothnessValue">0</span></label><input type="range" class="form-range" id="smoothness" min="0" max="5" value="0" step="1"></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header"><span data-lang-key="levels">Níveis (Levels)</span><button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="levels" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="levelsInBlack"><span><span data-lang-key="blackPoint">Ponto Preto</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="blackPointTooltip"></i></span><span id="levelsInBlackValue">0</span></label><input type="range" class="form-range" id="levelsInBlack" min="0" max="254" value="0" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="levelsInWhite"><span><span data-lang-key="whitePoint">Ponto Branco</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="whitePointTooltip"></i></span><span id="levelsInWhiteValue">255</span></label><input type="range" class="form-range" id="levelsInWhite" min="1" max="255" value="255" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="levelsGamma"><span><span data-lang-key="gamma">Gamma</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="gammaTooltip"></i></span><span id="levelsGammaValue">1.0</span></label><input type="range" class="form-range" id="levelsGamma" min="0.1" max="3" value="1" step="0.05"></div>
+                                </div>
+                                <div class="tool-group">
+                                    <h6 class="tool-group-header"><span data-lang-key="proceduralNoise">Ruído Procedural</span><button type="button" class="btn btn-sm btn-outline-secondary btn-reset-group" title="Resetar este grupo" data-reset-group="noise" data-bs-toggle="tooltip" data-lang-title-key="resetGroupTooltip"><i class="fa-solid fa-arrow-rotate-left"></i></button></h6>
+                                    <div class="slider-group"><label class="label-line" for="noiseScale"><span><span data-lang-key="scale">Escala</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="scaleTooltip"></i></span><span id="noiseScaleValue">50</span></label><input type="range" class="form-range" id="noiseScale" min="1" max="200" value="50" step="1"></div>
+                                    <div class="slider-group"><label class="label-line" for="noiseStrength"><span><span data-lang-key="strength">Intensidade</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="noiseStrengthTooltip"></i></span><span id="noiseStrengthValue">0.0</span></label><input type="range" class="form-range" id="noiseStrength" min="0" max="1" value="0" step="0.01"></div>
+                                    <label for="noiseBlendMode" class="form-label"><span data-lang-key="blendMode">Modo de Mesclagem</span> <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-lang-title-key="blendModeTooltip"></i></label><select id="noiseBlendMode" class="form-select"><option value="overlay">Overlay</option><option value="add">Add</option><option value="subtract">Subtract</option><option value="multiply">Multiply</option></select>
+                                </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-panel" id="export-section" style="display:none;">
+                        <div class="card-body">
+                            <h5 class="card-title" data-lang-key="section5Title">5. Exportar</h5>
+                            <label for="export-basename" class="form-label" data-lang-key="baseFileNameLabel">Nome Base do Arquivo</label>
+                            <input type="text" id="export-basename" class="form-control mb-3" data-lang-placeholder-key="baseFileNamePlaceholder" placeholder="ex: textura_rocha">
+                            <label for="export-format" class="form-label" data-lang-key="format">Formato</label>
+                            <select id="export-format" class="form-select"><option value="png">PNG</option><option value="jpeg">JPEG</option></select>
+                            <div id="jpeg-quality-group" class="slider-group mt-3" style="display: none;"><label class="label-line" for="jpeg-quality"><span data-lang-key="quality">Qualidade</span><span id="jpeg-qualityValue">85</span></label><input type="range" class="form-range" id="jpeg-quality" min="0" max="100" value="85" step="1"></div>
+                            <div class="d-grid gap-2 mt-3"><button type="button" id="exportBtn" class="btn btn-secondary" disabled data-lang-key="downloadMap">Baixar Mapa Selecionado</button><button type="button" id="exportAllBtn" class="btn btn-accent" disabled data-lang-key="downloadAll">Baixar Todos (.zip)</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-xl-9 panel-right-container">
+                <canvas id="viewer3d"></canvas>
+                <div class="viewer-controls card bg-panel">
+                    <div class="viewer-controls-header card-header" data-lang-key="viewerOptions">Opções de Visualização <span class="toggle-btn ms-auto">▾</span></div>
+                    <div class="viewer-controls-content card-body">
+                        <label for="model-select" class="form-label" data-lang-key="model3d">Modelo 3D</label>
+                        <select id="model-select" class="form-select"><option value="sphere" data-lang-key="sphere">Esfera</option><option value="cube" data-lang-key="cube">Cubo</option><option value="cylinder" data-lang-key="cylinder">Cilindro</option><option value="torus" data-lang-key="torus">Toro</option><option value="plane" data-lang-key="plane">Plano</option></select>
+                        <hr>
+                        <div class="slider-group"><label class="label-line" for="polyCountSlider"><span data-lang-key="meshQuality">Qualidade da Malha</span><span id="polyCountSliderValue">128</span></label><input type="range" class="form-range" id="polyCountSlider" min="16" max="256" value="128" step="8"></div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="wireframeToggle"><label class="form-check-label" for="wireframeToggle" data-lang-key="viewMesh">Visualizar Malha</label></div>
+                        <hr>
+                        <div class="slider-group mt-3"><label class="label-line" for="exposure"><span data-lang-key="exposure">Exposição</span><span id="exposureValue">1.2</span></label><input type="range" class="form-range" id="exposure" min="0" max="3" value="1.2" step="0.1"></div>
+                        <div class="slider-group"><label class="label-line" for="tiling"><span data-lang-key="tiling">Repetição (Tiling)</span><span id="tilingValue">1</span></label><input type="range" class="form-range" id="tiling" min="1" max="10" value="1" step="1"></div>
+                        <div class="slider-group"><label class="label-line" for="displacement"><span data-lang-key="displacement">Deslocamento</span><span id="displacementValue">0.05</span></label><input type="range" class="form-range" id="displacement" min="0" max="0.5" value="0.05" step="0.005"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center py-2 bg-panel">
+        <small class="text-muted">© <span id="year"></span> AlbedoFlow | <span data-lang-key="developedBy">Desenvolvido por:</span> <a href="https://www.facebook.com/paulosilva061/" target="_blank" rel="noopener noreferrer">Paulo061</a></small>
+    </footer>
+
+    <!-- MODALS -->
+    <div class="modal fade" id="generateMapsModal" tabindex="-1" aria-labelledby="generateMapsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="generateMapsModalLabel" data-lang-key="generateMapsModalTitle">Selecionar Mapas para Gerar</h5>
+                </div>
+                <div class="modal-body">
+                    <p data-lang-key="generateMapsModalDesc">Escolha quais mapas de textura você deseja criar a partir da sua imagem base.</p>
+                    <div id="maps-selection-list" class="list-group">
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="diffuse" checked> Diffuse (Cor Base)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="height" checked> Height (Altura/Relevo)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="normal" checked> Normal (Detalhes da Superfície)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="ao" checked> Ambient Occlusion (Sombras de Contato)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="roughness" checked> Roughness (Rugosidade)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="metallic"> Metallic (Metálico)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="curvature"> Curvature (Curvatura)</label>
+                        <label class="list-group-item"><input class="form-check-input me-2" type="checkbox" value="orm" checked> ORM (Occlusion, Roughness, Metallic)</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-lang-key="cancel">Cancelar</button>
+                    <button type="button" class="btn btn-accent" id="confirmGenerationBtn" data-lang-key="generateMaps">Gerar Mapas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="reportModalLabel" data-lang-key="reportModalTitle">Reportar Erro ou Sugestão</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><div id="report-form-status"></div><form id="report-form"><div class="mb-3"><label for="report-email" class="form-label" data-lang-key="reportEmailLabel">Seu Email (opcional, para contato)</label><input type="email" class="form-control" id="report-email" name="email"></div><div class="mb-3"><label for="report-message" class="form-label" data-lang-key="reportMessageLabel">Mensagem</label><textarea class="form-control" id="report-message" name="message" rows="4" required></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-lang-key="reportClose">Fechar</button><button type="submit" class="btn btn-accent" id="report-submit-btn"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span><span data-lang-key="reportSend">Enviar</span></button></div></form></div></div></div></div>
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="termsModalLabel" data-lang-key="termsModalTitle">Termos de Uso</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body" data-lang-key="termsModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-lang-key="termsClose">Fechar</button></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.167.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.167.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
